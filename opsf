@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TERMINAL</title>
+
+<style>
+
+body{
+  margin:0;
+  overflow:hidden;
+  background:black;
+  font-family:Consolas, monospace;
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+  z-index:0;
+}
+
+#terminal{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:80%;
+  max-width:900px;
+  padding:30px;
+  border:1px solid #00ff66;
+  background:rgba(0,0,0,0.85);
+  box-shadow:0 0 25px #00ff66;
+  color:#00ff66;
+  z-index:2;
+}
+
+#text{
+  white-space:pre-line;
+  line-height:1.8;
+  font-size:24px;
+}
+
+#final{
+  position:fixed;
+  inset:0;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:black;
+  color:#00ff66;
+  font-size:220px;
+  font-weight:bold;
+  text-shadow:0 0 40px #00ff66;
+  z-index:5;
+  animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+  50%{
+    opacity:0.6;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div id="terminal">
+  <div id="text"></div>
+</div>
+
+<div id="final">
+  СОСАЛ?
+</div>
+
+<script>
+
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const letters = "01СОСАЛЬ123456789";
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+
+const drops = [];
+
+for(let i=0;i<columns;i++){
+  drops[i]=1;
+}
+
+function draw(){
+
+  ctx.fillStyle="rgba(0,0,0,0.05)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="#00ff66";
+  ctx.font=fontSize+"px monospace";
+
+  for(let i=0;i<drops.length;i++){
+
+    const text = letters[Math.floor(Math.random()*letters.length)];
+
+    ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+    if(drops[i]*fontSize > canvas.height && Math.random()>0.975){
+      drops[i]=0;
+    }
+
+    drops[i]++;
+  }
+}
+
+setInterval(draw,35);
+
+const lines = [
+"[SCAN] Сканирование системы...",
+"[DECRYPT] Расшифровка данных...",
+"[SYSTEM] Вывод результата..."
+];
+
+const output = document.getElementById("text");
+
+let lineIndex = 0;
+let charIndex = 0;
+
+function type(){
+
+  if(lineIndex >= lines.length){
+
+    setTimeout(()=>{
+
+      document.getElementById("terminal").style.display="none";
+
+      document.getElementById("final").style.display="flex";
+
+    },1200);
+
+    return;
+  }
+
+  if(charIndex < lines[lineIndex].length){
+
+    output.innerHTML += lines[lineIndex][charIndex];
+
+    charIndex++;
+
+    setTimeout(type,35);
+
+  }else{
+
+    output.innerHTML += "\n";
+
+    lineIndex++;
+    charIndex=0;
+
+    setTimeout(type,500);
+  }
+}
+
+type();
+
+</script>
+
+</body>
+</html>
